@@ -39,7 +39,6 @@
         
     </style>
     <link rel="stylesheet" href="css/video.css">
-    <link rel="preload" href="https://www.iwan0.com/download/aiyo/bingbingliang2.mp4">
 </head>
 <body>
     <div id="app">
@@ -51,11 +50,13 @@
     <script>
         var player = null;
         var curIndex = 0;
-        var root = 'https://www.iwan0.com/download/aiyo/';
+        var root = 'http://hc.yinyuetai.com/uploads/videos/common/';
+        // http://hc.yinyuetai.com/uploads/videos/common/C55C01649BE431367709E70897C5D6F2.mp4
+        // http://hc.yinyuetai.com/uploads/videos/common/F8C1015D1AF22E61A0533391A27435A3.mp4
         var data = [
-            {video: 'bingbingliang2', title: '冰冰凉'},
-            {video: 'hahake1', title: '哈哈柯'},
-            {video: 'memesheng', title: '么么盛'}
+            {video: '0359016627C34455581212A5C823797F', title: '飘向北方-王力宏'},
+            {video: 'C55C01649BE431367709E70897C5D6F2', title: '等你下课-李建'},
+            {video: 'F8C1015D1AF22E61A0533391A27435A3', title: '骄傲的少年'}
         ]
 
         function init () {
@@ -64,7 +65,10 @@
 
             // 初始化播放器
             player = new iVideo('.ivideo-container', {
-                src: root + data[0].video + '.mp4'
+                src: {
+                    src: root + data[0].video + '.mp4',
+                    title: data[0].title
+                }
             });
         }
 
@@ -75,7 +79,10 @@
                 if (e.target.tagName === 'LI') {
                     curIndex = e.target.getAttribute('data-index') - 0;
                     var url = root + e.target.getAttribute('data-src');
-                    player.src(url);
+                    player.src({
+                        url,
+                        title: e.target.getAttribute('title')
+                    });
                     render();
                 }
             });
@@ -86,7 +93,7 @@
             var list = document.querySelector('.play-list');
             var html = '';
             data.forEach(function(item, index){
-                html += '<li data-src="' + item.video + '.mp4" data-index="' + index + '"';
+                html += '<li data-src="' + item.video + '.mp4" title="' + item.title + '" data-index="' + index + '"';
                 html += index === curIndex ? ' class="active"': '';
                 html += '>' + item.title + '</li>';
             });
