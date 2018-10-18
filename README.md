@@ -27,8 +27,8 @@ var player = new iVideo('.video', {
         // 视频源
         // 支持 string, object, array
         // 例如：'dd.mp4'
-        // {src: 'dd.mp4', type: 'mp4'}
-        // [{src: 'dd.mp4'}, {src: 'dd.ogg'}]
+        // {url: 'dd.mp4', type: 'mp4'}
+        // [{url: 'dd.mp4'}, {url: 'dd.ogg'}]
         src: [],
         // 是否显示控制按钮
         controls: true,
