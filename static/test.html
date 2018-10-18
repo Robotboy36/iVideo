@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>iVideo</title>
+    <style>body, time, p, h1, h2, h3, h4, h5, h6,
+        ul, ol {
+          margin: 0;
+          padding: 0;
+        }
+        
+        .play-list {
+          margin-top: 20px;
+          border-top: 1px solid #ddd;
+          list-style: none;
+        }
+        .play-list li {
+          position: relative;
+          height: 40px;
+          line-height: 40px;
+          font-size: 14px;
+          padding: 0 15px;
+        }
+        .play-list li:after {
+          content: '';
+          position: absolute;
+          height: 1px;
+          left: 15px;
+          right: 15px;
+          bottom: 0;
+          background: #ddd;
+        }
+        .play-list .active {
+          color: #00f;
+          background: rgba(0, 0, 0, 0.1);
+        }
+        
+    </style>
+    <link rel="stylesheet" href="css/video.css">
+    <link rel="preload" href="https://www.iwan0.com/download/aiyo/bingbingliang2.mp4">
+</head>
+<body>
+    <div id="app">
+        <div class="ivideo-container"></div>
+        <div class="play-list"></div>
+    </div>
+
+    <script src="./js/ivideo.min.js"></script>
+    <script>
+        var player = null;
+        var curIndex = 0;
+        var root = 'https://www.iwan0.com/download/aiyo/';
+        var data = [
+            {video: 'bingbingliang2', title: '冰冰凉'},
+            {video: 'hahake1', title: '哈哈柯'},
+            {video: 'memesheng', title: '么么盛'},
+            {video: 'mengmengbo', title: '萌萌波'},
+            {video: 'xixilei2', title: '胖娃娃'},
+            {video: 'hehezou', title: '呵呵邹'},
+            {video: 'huahua', title: '陶花花'}
+        ]
+
+        function init () {
+            render();
+            evts();
+
+            // 初始化播放器
+            player = new iVideo('.ivideo-container', {
+                src: root + data[0].video + '.mp4'
+            });
+        }
+
+        function evts () {
+            var list = document.querySelector('.play-list');
+
+            list.addEventListener('click', function(e){
+                if (e.target.tagName === 'LI') {
+                    curIndex = e.target.getAttribute('data-index') - 0;
+                    var url = root + e.target.getAttribute('data-src');
+                    player.src(url);
+                    render();
+                }
+            });
+        }
+
+
+        function render () {
+            var list = document.querySelector('.play-list');
+            var html = '';
+            data.forEach(function(item, index){
+                html += '<li data-src="' + item.video + '.mp4" data-index="' + index + '"';
+                html += index === curIndex ? ' class="active"': '';
+                html += '>' + item.title + '</li>';
+            });
+            list.innerHTML = html;
+        }
+
+
+        window.onload = init;
+    </script>
+</body>
+</html>
