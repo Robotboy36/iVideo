@@ -481,7 +481,7 @@ iVideo.prototype.src = function (sources) {
         this.setStatus(status.OFFLINE);
         return;
     }
-    sources = typeof sources === 'string' ? {url: sources} : sources;
+    sources = typeof sources === 'string' ? {src: sources} : sources;
 
     if (!isArray(sources)) {
         sources = [sources];
@@ -491,7 +491,7 @@ iVideo.prototype.src = function (sources) {
         this.warn('请传入src参数');
         return;
     }
-    if (!sources[0].url) {
+    if (!sources[0].src) {
         this.log(sources);
         this.error('视频地址错误，请确认地址');
         return;
@@ -503,12 +503,12 @@ iVideo.prototype.src = function (sources) {
     let html = '';
     sources.forEach(item => {
         let type = types[item.type];
-        html += `<source src="${item.url}"`;
+        html += `<source src="${item.src}"`;
         html += type ? ` type="${type}" />` : '/>';
     });
 
     // 设置title
-    let filepath = sources[0].url;
+    let filepath = sources[0].src;
     let title = sources[0].title || filepath.slice(filepath.lastIndexOf('/') + 1) || '';
     this._title.innerHTML = title;
     this._video.innerHTML = html;
