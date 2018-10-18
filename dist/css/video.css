@@ -40,10 +40,12 @@
     line-height: 30px;
     padding-left: 10px;
     width: 70%;
+    -o-text-overflow: ellipsis;
+       text-overflow: ellipsis;
     overflow: hidden;
     word-break: keep-all;
     white-space: nowrap;
-    color: #777;
+    color: #888;
     font-size: 12px;
     font-weight: normal;
     -webkit-transform: translateY(0);
@@ -209,7 +211,7 @@
     -webkit-transform: translateY(100%);
         -ms-transform: translateY(100%);
             transform: translateY(100%); }
-  .ivideo.ivideo-loading .ivideo-title, .ivideo.ivideo-hidepro .ivideo-title {
+  .ivideo.ivideo-hidepro .ivideo-title {
     -webkit-transform: translateY(-30px);
         -ms-transform: translateY(-30px);
             transform: translateY(-30px); }

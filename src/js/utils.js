@@ -90,7 +90,7 @@ export function clone (target, source, isDeep = false) {
             target[prop] = isObject(target[prop]) ? target[prop] : {};
             clone(target[prop], value, true);
 
-        } else if (iArray(value)) {
+        } else if (isArray(value)) {
             target[prop] = value.concat([]);
 
         } else {
@@ -106,7 +106,7 @@ export function isObject (param) {
     return Object.prototype.toString.call(param) === '[object Object]';
 }
 
-export function iArray (param) {
+export function isArray (param) {
     return Array.isArray(param)
 }
 

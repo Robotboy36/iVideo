@@ -56,7 +56,7 @@ module.exports = {
             new HtmlWebpackPlugin({
                 template: resolve('index.html'),
                 filename: 'index.html',
-                inject: true
+                inject: 'head'
             }),
             new webpack.optimize.OccurrenceOrderPlugin(),
             new ExtractTextPlugin('css/video.css'),

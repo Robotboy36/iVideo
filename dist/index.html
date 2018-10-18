@@ -5,10 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>iVideo</title>
-<link href="css/video.css" rel="stylesheet"></head>
+    <style>body, time, p, h1, h2, h3, h4, h5, h6,
+        ul, ol {
+          margin: 0;
+          padding: 0;
+        }
+        
+        .play-list {
+          margin-top: 20px;
+          border-top: 1px solid #ddd;
+          list-style: none;
+        }
+        .play-list li {
+          position: relative;
+          height: 40px;
+          line-height: 40px;
+          font-size: 14px;
+          padding: 0 15px;
+        }
+        .play-list li:after {
+          content: '';
+          position: absolute;
+          height: 1px;
+          left: 15px;
+          right: 15px;
+          bottom: 0;
+          background: #ddd;
+        }
+        .play-list .active {
+          color: #00f;
+          background: rgba(0, 0, 0, 0.1);
+        }
+        
+    </style>
+<link href="css/video.css" rel="stylesheet"><script type="text/javascript" src="js/ivideo.min.js"></script></head>
 <body>
     <div id="app">
         <div class="ivideo-container"></div>
+        <div class="play-list"></div>
     </div>
-<script type="text/javascript" src="js/ivideo.min.js"></script></body>
+
+    <script>
+        var player = null;
+        var curIndex = 0;
+        var data = [
+            {title: '潘玮柏 - coming home', url: 'http://fs.mv.web.kugou.com/201810181303/267febe10fd365121cd31042aab24354/G096/M03/1C/1F/AIcBAFlur2SAZoPgASQtuWtZUXA396.mp4'},
+            {title: '等你下课-周杰伦', url: 'http://fs.mv.web.kugou.com/201810181242/a7b0e075f8f3cbb27e8e6fbc9280724a/G124/M09/06/03/XJQEAFqNgriAfM7_AUfoqEhViW0925.mp4'},
+            {title: 'NZBZ - 我的天空', url: 'http://fs.mv.web.kugou.com/201810181255/cd6c6d7e3461f1c791bb1aff2308d920/G092/M0A/0A/14/PJQEAFiC7_WAXCg4ARqfUNYyS8g784.mp4'},
+            {title: 'NZBZ - 骄傲的少年', url: 'http://fs.mv.web.kugou.com/201810181253/5400f0072ecc16eac7eaae5559613e10/G132/M08/04/19/JIcBAFsjVbyAXoV1APGyp1V7-40673.mp4'},
+            {title: 'Json - 飘向北方', url: 'http://fs.mv.web.kugou.com/201810181257/481f25de1a37cf938940048807484074/G098/M08/1D/03/AocBAFj--rOAAjmtATzts9Xlxuc001.mp4'},
+            {title: 'MC热狗 - 离开', url: 'http://fs.mv.web.kugou.com/201810181259/7905c9ba6260411cabe1c95e6a0397b2/G033/M01/10/09/YQ0DAFXeBByAGoLnAoeuqdmrqcU387.mp4'}
+        ]
+
+        function init () {
+            render();
+            evts();
+
+            // 初始化播放器
+            player = new iVideo('.ivideo-container', {
+                src: {
+                    url: data[0].url,
+                    title: data[0].title
+                }
+            });
+
+            player.on('ended', next);
+            player.on('error', next);
+        }
+
+        function next () {
+            curIndex++;
+            
+            if (curIndex === data.length) {
+                curIndex = 0;
+            }
+        }
+
+        function evts () {
+            var list = document.querySelector('.play-list');
+
+            list.addEventListener('touchend', function(e){
+                if (e.target.tagName === 'LI') {
+                    curIndex = e.target.getAttribute('data-index') - 0;
+                    player.src({
+                        url: data[curIndex].url,
+                        title: data[curIndex].title
+                    });
+                    render();
+                }
+            });
+        }
+
+
+        function render () {
+            var list = document.querySelector('.play-list');
+            var html = '';
+            data.forEach(function(item, index){
+                html += '<li data-index="' + index + '"';
+                html += index === curIndex ? ' class="active"': '';
+                html += '>' + item.title + '</li>';
+            });
+            list.innerHTML = html;
+        }
+
+
+        window.onload = init;
+    </script>
+</body>
 </html>

@@ -6,12 +6,13 @@ import {
     fullscreen,
     cancelFullscreen,
     toast,
-    deviceInfo
+    deviceInfo,
+    isArray,
+    isFunction,
+    isObject
 } from './utils';
-import { isFunction } from 'util';
 import types from './types';
 import status from './status';
-import { isObject } from 'util';
 
 const device = deviceInfo();
 
@@ -125,12 +126,8 @@ iVideo.prototype.render = function () {
         <!-- 播放与暂停大按钮 -->
         <div class="ivideo-btn"></div>
         <span class="ivideo-volume toast-hide">音量 100%</span>
-        <h2 class="ivideo-title">{{title}}</h2>`;
+        <h2 class="ivideo-title"></h2>`;
     
-    let src = this.opts.src;
-    let filepath = isFunction(src) ? src[0] : isObject(src) ? src.src : src;
-    let title = this.opts.title || filepath.slice(filepath.lastIndexOf('/') + 1) || '';
-    html = html.replace('{{title}}', title );
     components.innerHTML = html;
 
     setTimeout(() => {
@@ -141,6 +138,7 @@ iVideo.prototype.render = function () {
         this._timeout = q('.timeout', components);
         this._playBig = q('.ivideo-btn', components);
         this._volume = q('.ivideo-volume', components);
+        this._title = q('.ivideo-title', components);
 
         this.renderVideo();
         this.setSize();
@@ -276,7 +274,12 @@ iVideo.prototype.videoEvt = function () {
     ['error'].forEach(function(evt){
         _video.addEventListener(evt, function (e) {
             _this.error(e);
+            _this.execute(evt);
         });
+    });
+
+    _video.addEventListener('ended', function () {
+        this.execute('ended');
     });
 
     _video.addEventListener('play', () => {
@@ -474,14 +477,23 @@ iVideo.prototype.setSize = function (size) {
 // object {src: '', type: ''}
 // array [{src: '', type: ''}]
 iVideo.prototype.src = function (sources) {
-    sources = typeof sources === 'string' ? {src: sources} : sources;
+    if (!navigator.onLine) {
+        this.setStatus(status.OFFLINE);
+        return;
+    }
+    sources = typeof sources === 'string' ? {url: sources} : sources;
 
-    if (!Array.isArray(sources)) {
+    if (!isArray(sources)) {
         sources = [sources];
     }
     //
     if (sources.length === 0) {
         this.warn('请传入src参数');
+        return;
+    }
+    if (!sources[0].url) {
+        this.log(sources);
+        this.error('视频地址错误，请确认地址');
         return;
     }
 
@@ -491,15 +503,14 @@ iVideo.prototype.src = function (sources) {
     let html = '';
     sources.forEach(item => {
         let type = types[item.type];
-        html += `<source src="${item.src}"`;
+        html += `<source src="${item.url}"`;
         html += type ? ` type="${type}" />` : '/>';
     });
 
-    if (!navigator.onLine) {
-        this.setStatus(status.OFFLINE);
-        return;
-    }
-
+    // 设置title
+    let filepath = sources[0].url;
+    let title = sources[0].title || filepath.slice(filepath.lastIndexOf('/') + 1) || '';
+    this._title.innerHTML = title;
     this._video.innerHTML = html;
     this.reload();
 }
@@ -674,7 +685,7 @@ iVideo.prototype.execute = function (type) {
 
 // 注入中间件
 iVideo.use = function (middlewave = []) {
-    if (!Array.isArray(middlewave)) {
+    if (!isArray(middlewave)) {
         middlewave = [middlewave];
     }
 

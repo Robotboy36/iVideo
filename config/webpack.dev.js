@@ -14,8 +14,8 @@ module.exports = merger(base, {
         hot: true,
         port: 9494,
         open: true,
-        openPage: './test.html',
-        host: '192.168.8.192'
-        // host: 'localhost'
+        openPage: './index.html',
+        // host: '192.168.8.192'
+        host: 'localhost'
     }
 });
