@@ -24,9 +24,15 @@ var player = new iVideo('.video', {
 - options: {} 相关配置项
 ``` javascript
   options = {
+        // 视频源
+        // 支持 string, object, array
+        // 例如：'dd.mp4'
+        // {src: 'dd.mp4', type: 'mp4'}
+        // [{src: 'dd.mp4'}, {src: 'dd.ogg'}]
         src: [],
         // 是否显示控制按钮
         controls: true,
+        // 是否包含进度条
         hasProgress: true,
         // 初始化音量
         volume: 1,
