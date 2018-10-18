@@ -19,6 +19,11 @@ const device = deviceInfo();
 //
 function iVideo (selector, params = {}) {
     let opts = {
+        // 视频源
+        // 支持 string, object, array
+        // 例如：'dd.mp4'
+        // {src: 'dd.mp4', type: 'mp4'}
+        // [{src: 'dd.mp4'}, {src: 'dd.ogg'}]
         src: [],
         
         // 是否直播

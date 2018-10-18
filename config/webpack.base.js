@@ -60,8 +60,8 @@ module.exports = {
             }),
             new webpack.optimize.OccurrenceOrderPlugin(),
             new ExtractTextPlugin('css/video.css'),
-            new CopyWebpackPlugin([
-                {from: './static', to: './'}
-            ])
+            // new CopyWebpackPlugin([
+            //     {from: './static', to: './'}
+            // ])
         ]
 };
