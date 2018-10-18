@@ -59,7 +59,9 @@ class Log {
             args = [args.join('---')];
         }
 
-        action.apply(_self, args);
+        if (_self.hasOwnProperty(type) || log.hasOwnProperty(type)) {
+            action.apply(null, args);
+        }
     }
 
     // 注入方法

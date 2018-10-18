@@ -68,7 +68,7 @@
             render();
             evts();
 
-            // 初始化播放器
+            // // 初始化播放器
             player = new iVideo('.ivideo-container', {
                 src: {
                     src: data[0].src,
@@ -77,7 +77,6 @@
             });
 
             player.on('ended', next);
-            player.on('error', next);
         }
 
         function next () {
@@ -97,10 +96,10 @@
                 if (e.target.tagName === 'LI') {
                     e.target.classList.add('touch');
                 }
-            });
+            }, false);
 
             list.addEventListener('touchend', function(e){
-                let el = e.target;
+                var el = e.target;
                 if (el.tagName === 'LI') {
                     el.classList.remove('touch');                    
                     curIndex = el.getAttribute('data-index') - 0;
@@ -111,7 +110,7 @@
                     });
                     render();
                 }
-            });
+            }, false);
         }
 
 
@@ -126,8 +125,15 @@
             list.innerHTML = html;
         }
 
-
-        window.onload = init;
+        window.addEventListener('load', init);
+        window.addEventListener('error', function (e) {
+            var msg = 'msg: ' + e.message + '\n';
+            msg += 'filename: ' + e.filename + '\n';
+            msg += 'lineno: ' + e.lineno + '\n';
+            msg += 'colno: ' + e.colno + '\n';
+            msg += 'error: ' + e.error;
+            alert(msg);
+        })
     </script>
 </body>
 </html>
