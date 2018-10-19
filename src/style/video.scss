@@ -25,6 +25,7 @@
 
     .toast-hide {
         opacity: 0;
+        z-index: -10;
     }
 
     video {
@@ -39,22 +40,23 @@
     &-title {
         position: absolute;
         left: 0;
+        right: 0;
         top: 0;
         z-index: 50;
         text-align: left;
         height: 30px;
         line-height: 30px;
         padding-left: 10px;
-        width: 70%;
         text-overflow: ellipsis;
         overflow: hidden;
         word-break: keep-all;
         white-space: nowrap;
-        color: #888;
+        color: #ccc;
         font-size: 12px;
         font-weight: normal;
         transform: translateY(0);
         transition: all 0.3s;
+        background: linear-gradient(to bottom, rgba(#000, 0.5), rgba(#000, 0));
     }
 
     .loading {
@@ -104,13 +106,19 @@
     &-volume {
         font-size: 12px;
         position: absolute;
-        right: 10px;
-        top: 10px;
-        z-index: 20;
-        padding: 10px;
+        right: 0;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 90px;
+        height: 36px;
+        line-height: 36px;
+        text-align: center;
+        margin: auto;
+        z-index: 51;
         border-radius: 3px;
         opacity: 1;
-        transition: all 0.3s;
+        transition: opacity 0.3s;
         color: #fff;
         background: #070707;
     }

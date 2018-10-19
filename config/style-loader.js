@@ -2,6 +2,7 @@
 
 module.exports = function(type, options = {}) {
     let loaders = [
+        {loader: 'style-loader'},
         {
             loader: "css-loader",
             options: {
@@ -21,8 +22,10 @@ module.exports = function(type, options = {}) {
         });
     }
 
-    return {
-        fallback: "style-loader",
-        use: loaders
-    };
+    // return {
+    //     fallback: "style-loader",
+    //     use: loaders
+    // };
+
+    return loaders;
 };

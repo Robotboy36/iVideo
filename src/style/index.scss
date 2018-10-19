@@ -1,0 +1,39 @@
+
+* {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+body, time, p, h1, h2, h3, h4, h5, h6,
+ul, ol {
+    margin: 0;
+    padding: 0;
+}
+
+.play-list {
+    margin-top: 20px;
+    border-top: 1px solid #ddd;
+    list-style: none;
+    li {
+        position: relative;
+        height: 40px;
+        line-height: 40px;
+        font-size: 14px;
+        padding: 0 15px;
+
+        &:after {
+            content: '';
+            position: absolute;
+            height: 1px;
+            left: 15px;
+            right: 15px;
+            bottom: 0;
+            background: #ddd;
+        }
+    }
+    .touch {
+        background: #fafafa;
+    }
+    .active {
+        color: #00f;
+        background: #f2f2f2;
+    }
+}

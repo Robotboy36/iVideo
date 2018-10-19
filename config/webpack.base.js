@@ -14,11 +14,14 @@ function resolve (p) {
 
 
 module.exports = {
-        entry: resolve('src/index.js'),
+        entry: {
+            'video.min': resolve('src/app.js'),
+            'index': resolve('src/index.js'),
+        },
 
         output: {
             path: resolve('dist'),
-            filename: 'js/ivideo.min.js'
+            filename: 'js/[name].js'
         },
 
         module: {
@@ -31,12 +34,12 @@ module.exports = {
                     exclude: /node_modules/
                 }, {
                     test: /\.scss$/,
-                    use: ExtractTextPlugin.extract(styleLoader('sass', {
+                    use: styleLoader('sass', {
                         outputStyle: 'extanded'
-                    }))
+                    })
                 }, {
                     test: /\.css$/,
-                    use: ExtractTextPlugin.extract(styleLoader())
+                    use: styleLoader()
                 }, {
                     test: /\.(png|gif|svg|jpe?g)$/,
                     use: {
@@ -45,6 +48,15 @@ module.exports = {
                             limit: 1048,
                             publicPath: '../',
                             name: 'imgs/[name].[ext]'
+                        }
+                    }
+                }, {
+                    test: /\.mp4$/i,
+                    use: {
+                        loader: 'file-loader',
+                        options: {
+                            publicPath: '../',
+                            name: 'media/[name].[ext]'
                         }
                     }
                 }
@@ -56,10 +68,10 @@ module.exports = {
             new HtmlWebpackPlugin({
                 template: resolve('index.html'),
                 filename: 'index.html',
-                inject: 'head'
+                inject: true
             }),
             new webpack.optimize.OccurrenceOrderPlugin(),
-            new ExtractTextPlugin('css/video.css'),
+            // new ExtractTextPlugin('css/video.css'),
             // new CopyWebpackPlugin([
             //     {from: './static', to: './'}
             // ])

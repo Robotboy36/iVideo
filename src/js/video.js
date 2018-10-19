@@ -83,6 +83,8 @@ function iVideo (selector, params = {}) {
     this.touchMove = false;
     // 是否点击过播放按钮
     this.touchPlay = false;
+    // 用于滑动时临时设定
+    this.playCurrentTime = 0;
 
     // 是否成功初始化
     this.inited = false;
@@ -283,7 +285,7 @@ iVideo.prototype.videoEvt = function () {
         });
     });
 
-    _video.addEventListener('ended', function () {
+    _video.addEventListener('ended', () => {
         this.execute('ended');
     });
 
@@ -296,7 +298,10 @@ iVideo.prototype.videoEvt = function () {
     });
 
     _video.addEventListener('pause', () => {
-        el.classList.add('ivideo-' + status.PAUSED);
+        if (!this.touchMove) {
+            el.classList.add('ivideo-' + status.PAUSED);
+        }
+
         // 执行用户监听函数
         this.execute('pause');
     });
@@ -335,7 +340,13 @@ iVideo.prototype.videoEvt = function () {
     // 播放与暂停
     // 控制条等控制
     // 滑动调整音量和播放进度
-    let pos = { fx: 0, fy: 0, x: 0, y: 0 };
+    // direction: -1 未知， 0：横向滑动， 1：纵向滑动
+    let pos = { 
+        fx: 0, fy: 0,
+        x: 0, y: 0,
+        direction: -1
+    };
+    let lastTouchTime = 0; // 模拟双击
     //
     el.addEventListener('touchstart', (e) => {
         if (el.classList.contains('video-' + status.LOADING)) {
@@ -352,6 +363,7 @@ iVideo.prototype.videoEvt = function () {
         pos.y = touch.pageY;
         pos.fx = touch.pageX;
         pos.fy = touch.pageY;
+        pos.direction = -1;
     });
     // 
     el.addEventListener('touchmove', (e) => {
@@ -361,18 +373,24 @@ iVideo.prototype.videoEvt = function () {
         let touch = e.changedTouches[0];
         let x = touch.pageX;
         let y = touch.pageY;
+
+        // 首次判别方向
+        if (pos.direction === -1) {
+            pos.direction = Math.abs(y - pos.fy) > 1 ? 1 : pos.direction;
+            pos.direction = Math.abs(x - pos.fx) > 1 ? 0 : pos.direction;
+        }
         // 判断是否是纵向滑动
         // 纵向滑动调整音量
         // 横向滑动调整播放进度
-        let isY = Math.abs(y - pos.fy) > Math.abs(x - pos.fx);
-        let isX = Math.abs(x - pos.fx) > Math.abs(y - pos.fy);
+        let isY = Math.abs(y - pos.fy) > Math.abs(x - pos.fx) && pos.direction === 1;
+        let isX = Math.abs(x - pos.fx) > Math.abs(y - pos.fy) && pos.direction === 0;
 
         if (isY) {
             let volume = pos.y - y > 0 ? 1 : -1;
             this.setVolume(volume);
         } else if (isX) {
             let distance = (x - pos.x);
-            this.setCurrentTime(distance);
+            this.setMoveDistance(distance);
         }
 
         pos.x = touch.pageX;
@@ -399,10 +417,34 @@ iVideo.prototype.videoEvt = function () {
             }
             return;
         }
+        
+        pos.direction = -1;
+        // 滑动播放进度控制
+        if (this.touchMove && this.playCurrentTime !== 0) {
+            this._video.currentTime = this.playCurrentTime;
+            this.playCurrentTime = 0;
+            // 之前不是暂停状态
+            if (!this.isPaused) {
+                this._video.play();
+            }
+            return;
+        }
 
-        //
+        // 单双击
         if (!this.touchMove && tag === 'video') {
-            el.classList.contains('ivideo-hidepro') ? el.classList.remove('ivideo-hidepro'):el.classList.add('ivideo-hidepro');
+            let time = +new Date();
+            let dbTouch = time - lastTouchTime < 200;
+            if (dbTouch) {
+                this._video.paused ? this.play() : this.pause();
+            }
+            lastTouchTime = time;
+
+            clearTimeout(this.tempTouchKey);
+            this.tempTouchKey = setTimeout(() => { 
+                if (!dbTouch) {
+                    el.classList.contains('ivideo-hidepro') ? el.classList.remove('ivideo-hidepro'):el.classList.add('ivideo-hidepro');
+                }
+            }, 200);
             return;
         }
 
@@ -418,11 +460,6 @@ iVideo.prototype.videoEvt = function () {
             }
             return;
         }
-        
-        // 滑动松开后
-        if (!this.isPaused && this.touchMove) {
-            this._video.play();
-        }
     });
 
     // 超时与掉线
@@ -435,9 +472,15 @@ iVideo.prototype.videoEvt = function () {
 
 
 // 设置播放进度
+iVideo.prototype.setCurrentTime = function (value) {
+    // 设定播放时间
+    this._video.currentTime = value;
+}
+
+
 // 滑动设置播放进度
 // 步进值， 滑动距离
-iVideo.prototype.setCurrentTime = function (moveDistance) {
+iVideo.prototype.setMoveDistance = function (moveDistance) {
     // 拖动时暂停
     this._video.pause();
 
@@ -455,9 +498,14 @@ iVideo.prototype.setCurrentTime = function (moveDistance) {
     // 设定宽度
     // 设定播放时间
     this._bar.style.width = pos + 'px';
-    this._video.currentTime = pos / this._progress.offsetWidth * this._video.duration;
-    this._cur.innerHTML = formatTime(this._video.currentTime);
+    this.playCurrentTime = pos / this._progress.offsetWidth * this._video.duration;
+    //
+    let time = formatTime(this.playCurrentTime);
+    this._cur.innerHTML = time;
+    this._volume.innerHTML = time;
+    toast(this._volume, 800);
 }
+
 
 
 // 设置video大小

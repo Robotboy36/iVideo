@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "clean": "rm -rf ./dist",
     "start": "webpack-dev-server --inline --watch --hot --config=./config/webpack.dev.js",
-    "build": "webpack-cli --config=./config/webpack.prd.js"
+    "build": "npm run clean && webpack-cli --config=./config/webpack.prd.js"
   },
   "repository": {
     "type": "git",

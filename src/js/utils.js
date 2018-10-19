@@ -114,7 +114,7 @@ export function isArray (param) {
 // 淡入，自动淡出
 var _toast_key = 0;
 export function toast (el, time) {
-    time = time || 2000;
+    time = time || 1000;
     el.classList.remove('toast-hide');
 
     clearTimeout(_toast_key);
